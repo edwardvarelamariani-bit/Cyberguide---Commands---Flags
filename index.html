@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CyberGuide :: Comandos & FLAGS</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap');
+
+  :root {
+    --cyan: #00f5ff;
+    --cyan-dim: #00c8d4;
+    --cyan-dark: #007a85;
+    --green: #39ff14;
+    --green-dim: #1a8c00;
+    --yellow: #ffe600;
+    --orange: #ff6b00;
+    --red: #ff2244;
+    --pink: #ff00aa;
+    --bg: #050b0e;
+    --bg2: #080f14;
+    --bg3: #0a1520;
+    --bg4: #0d1e2a;
+    --border: #0f3040;
+    --border-bright: #1a5070;
+    --text: #b0d8e8;
+    --text-dim: #5a8a9a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  /* Scanlines overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── HEADER ── */
+  #header {
+    background: linear-gradient(135deg, #020a10 0%, #04131c 50%, #020a10 100%);
+    border-bottom: 2px solid var(--cyan);
+    padding: 24px 32px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 30px rgba(0,245,255,0.15);
+  }
+  #header h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.6em;
+    font-weight: 900;
+    color: var(--cyan);
+    text-shadow: 0 0 20px rgba(0,245,255,0.5), 0 0 40px rgba(0,245,255,0.2);
+    letter-spacing: 4px;
+    margin-bottom: 4px;
+  }
+  #header .subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75em;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+  }
+  #header .subtitle span { color: var(--green); }
+
+  /* ── SEARCH ── */
+  #search-wrap {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  #search {
+    flex: 1;
+    max-width: 480px;
+    background: var(--bg3);
+    border: 1px solid var(--border-bright);
+    color: var(--cyan);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.9em;
+    padding: 7px 14px;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    letter-spacing: 1px;
+  }
+  #search::placeholder { color: var(--text-dim); }
+  #search:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 12px rgba(0,245,255,0.25);
+  }
+  #search-count {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8em;
+    color: var(--text-dim);
+    min-width: 120px;
+  }
+  #search-count span { color: var(--yellow); }
+
+  /* ── TABS NAV ── */
+  #tabs-nav {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-bright) transparent;
+  }
+  .tab-btn {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.62em;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 12px 18px 10px;
+    background: transparent;
+    color: var(--text-dim);
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color .2s, border-color .2s;
+  }
+  .tab-btn:hover { color: var(--cyan); }
+  .tab-btn.active {
+    color: var(--cyan);
+    border-bottom-color: var(--cyan);
+  }
+  .tab-btn .icon { margin-right: 6px; }
+
+  /* ── LAYOUT ── */
+  #main {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: calc(100vh - 160px);
+  }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    position: sticky;
+    top: 140px;
+    height: calc(100vh - 140px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-bright) transparent;
+  }
+  .sidebar-section { margin-bottom: 6px; }
+  .sidebar-cat {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65em;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    padding: 8px 18px 4px;
+    text-transform: uppercase;
+  }
+  .sidebar-link {
+    display: block;
+    padding: 5px 18px 5px 22px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.85em;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all .15s;
+  }
+  .sidebar-link:hover, .sidebar-link.active {
+    color: var(--cyan);
+    border-left-color: var(--cyan);
+    background: rgba(0,245,255,0.04);
+  }
+  .sidebar-link .cmd-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8em;
+    color: var(--green);
+    margin-right: 6px;
+  }
+
+  /* ── CONTENT AREA ── */
+  #content {
+    padding: 28px 32px;
+    max-width: 1100px;
+  }
+
+  /* ── PANELS ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── SECTION HEADING ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 32px 0 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-header:first-child { margin-top: 0; }
+  .section-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65em;
+    font-weight: 900;
+    color: var(--bg3);
+    background: var(--cyan);
+    padding: 4px 10px;
+    letter-spacing: 2px;
+  }
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85em;
+    font-weight: 700;
+    color: var(--cyan);
+    letter-spacing: 3px;
+    text-shadow: 0 0 10px rgba(0,245,255,0.3);
+  }
+
+  /* ── COMMAND CARD ── */
+  .cmd-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--cyan-dark);
+    margin-bottom: 16px;
+    transition: border-left-color .2s, box-shadow .2s;
+  }
+  .cmd-card:hover {
+    border-left-color: var(--cyan);
+    box-shadow: 0 0 20px rgba(0,245,255,0.08);
+  }
+  .cmd-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: rgba(0,245,255,0.04);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .cmd-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1em;
+    color: var(--green);
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .cmd-name .prompt { color: var(--cyan-dim); }
+  .cmd-desc {
+    font-size: 0.82em;
+    color: var(--text-dim);
+    margin-left: 12px;
+  }
+  .toggle-icon {
+    color: var(--text-dim);
+    font-size: 0.8em;
+    transition: transform .2s;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .cmd-card.open .toggle-icon { transform: rotate(180deg); }
+  .cmd-body {
+    display: none;
+    padding: 14px 16px;
+    gap: 16px;
+  }
+  .cmd-card.open .cmd-body { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  @media(max-width:800px) {
+    .cmd-card.open .cmd-body { grid-template-columns: 1fr; }
+    #main { grid-template-columns: 1fr; }
+    #sidebar { display: none; }
+  }
+
+  .flags-section h4, .examples-section h4 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6em;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .flags-section h4 { color: var(--yellow); }
+  .examples-section h4 { color: var(--orange); }
+
+  .flag-row {
+    display: flex;
+    gap: 8px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 0.85em;
+    align-items: baseline;
+  }
+  .flag-row:last-child { border-bottom: none; }
+  .flag-key {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--yellow);
+    white-space: nowrap;
+    min-width: 120px;
+    font-size: 0.88em;
+  }
+  .flag-val { color: var(--text); }
+
+  .example-block {
+    background: var(--bg4);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--orange);
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8em;
+    color: var(--cyan-dim);
+    white-space: pre-wrap;
+    word-break: break-all;
+    position: relative;
+  }
+  .example-block .copy-btn {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    background: var(--border-bright);
+    color: var(--text-dim);
+    border: none;
+    font-size: 0.75em;
+    padding: 2px 7px;
+    cursor: pointer;
+    font-family: 'Share Tech Mono', monospace;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .example-block:hover .copy-btn { opacity: 1; }
+  .example-block .copy-btn:hover { color: var(--cyan); }
+
+  /* ── TREE VIEW (doc 1) ── */
+  .tree-section {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--green-dim);
+    margin-bottom: 12px;
+    transition: border-left-color .2s;
+  }
+  .tree-section:hover { border-left-color: var(--green); }
+  .tree-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 14px;
+    background: rgba(57,255,20,0.04);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .tree-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.88em;
+    color: var(--green);
+    letter-spacing: 1px;
+  }
+  .tree-body {
+    display: none;
+    padding: 12px 16px;
+  }
+  .tree-section.open .tree-body { display: block; }
+  .tree-table { width: 100%; border-collapse: collapse; }
+  .tree-table tr { border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .tree-table tr:last-child { border-bottom: none; }
+  .tree-table td { padding: 4px 8px; font-size: 0.85em; }
+  .tree-table .t-cmd {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--green);
+    width: 130px;
+    white-space: nowrap;
+  }
+  .tree-table .t-flag {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--yellow);
+    width: 90px;
+    white-space: nowrap;
+  }
+  .tree-table .t-desc { color: var(--text); }
+  .tree-sub { margin-top: 8px; }
+  .tree-sub-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6em;
+    color: var(--cyan-dim);
+    letter-spacing: 2px;
+    margin: 8px 0 4px;
+  }
+
+  /* ── HIGHLIGHT ── */
+  .highlight { background: rgba(255,230,0,0.2); color: var(--yellow) !important; }
+
+  /* ── DANGER ZONE ── */
+  .danger-card {
+    background: rgba(255,34,68,0.06);
+    border: 1px solid rgba(255,34,68,0.3);
+    border-left: 3px solid var(--red);
+    padding: 10px 16px;
+    margin-bottom: 8px;
+  }
+  .danger-card .d-cmd {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--red);
+    font-size: 0.9em;
+  }
+  .danger-card .d-desc { font-size: 0.82em; color: rgba(255,100,100,0.7); margin-top: 2px; }
+
+  /* ── COMBO CARD ── */
+  .combo-card {
+    background: var(--bg4);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--pink);
+    padding: 8px 14px;
+    margin-bottom: 8px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+  .combo-cmd {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8em;
+    color: var(--cyan);
+  }
+  .combo-desc { font-size: 0.82em; color: var(--text-dim); }
+
+  /* ── STATS BAR ── */
+  #stats {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 8px 32px;
+    display: flex;
+    gap: 28px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72em;
+    color: var(--text-dim);
+  }
+  #stats .stat-val { color: var(--cyan); }
+
+  /* ── BADGE ── */
+  .badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65em;
+    padding: 2px 7px;
+    margin-left: 8px;
+    letter-spacing: 1px;
+    vertical-align: middle;
+  }
+  .badge-soc { background: rgba(0,245,255,0.15); color: var(--cyan); border: 1px solid var(--cyan-dark); }
+  .badge-red { background: rgba(255,34,68,0.15); color: var(--red); border: 1px solid rgba(255,34,68,0.4); }
+  .badge-linux { background: rgba(57,255,20,0.12); color: var(--green); border: 1px solid var(--green-dim); }
+
+  /* search no-results */
+  #no-results {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--text-dim);
+  }
+  #no-results .nr-icon { font-size: 2em; margin-bottom: 10px; color: var(--border-bright); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <h1>◈ CYBERGUIDE <span style="color:var(--text-dim);font-size:.6em;letter-spacing:2px">:: COMANDOS & FLAGS</span></h1>
+  <div class="subtitle">SOC · BLUE TEAM · LINUX · RED TEAM &nbsp;|&nbsp; <span>EDWARD VARELA · ALICANTE 2026</span></div>
+  <div id="search-wrap">
+    <input id="search" type="text" placeholder="buscar comando, flag, descripción..." autocomplete="off" spellcheck="false">
+    <div id="search-count">mostrando <span id="vis-count">–</span> resultados</div>
+  </div>
+</div>
+
+<!-- TABS NAV -->
+<div id="tabs-nav">
+  <button class="tab-btn active" data-tab="linux"><span class="icon">🐧</span>LINUX BASE</button>
+  <button class="tab-btn" data-tab="recon"><span class="icon">🔍</span>RECON</button>
+  <button class="tab-btn" data-tab="web"><span class="icon">🌐</span>WEB / FUZZING</button>
+  <button class="tab-btn" data-tab="logs"><span class="icon">📋</span>LOGS / TEXT</button>
+  <button class="tab-btn" data-tab="network"><span class="icon">📡</span>TRÁFICO RED</button>
+  <button class="tab-btn" data-tab="creds"><span class="icon">🔑</span>CREDENCIALES</button>
+  <button class="tab-btn" data-tab="postexp"><span class="icon">🎯</span>POST-EXPL</button>
+  <button class="tab-btn" data-tab="soc"><span class="icon">🛡️</span>SOC / MONITOR</button>
+  <button class="tab-btn" data-tab="forense"><span class="icon">🔬</span>FORENSE</button>
+  <button class="tab-btn" data-tab="hardening"><span class="icon">🔒</span>HARDENING</button>
+  <button class="tab-btn" data-tab="bash"><span class="icon">⚙️</span>BASH SCRIPT</button>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div id="sidebar-content"></div>
+</div>
+
+<!-- CONTENT -->
+<div id="content">
+<div id="no-results">
+  <div class="nr-icon">⊘</div>
+  <div>Sin resultados para "<span id="no-results-term"></span>"</div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- PANEL: LINUX BASE -->
+<!-- ══════════════════════════════════════ -->
+<div class="panel active" id="panel-linux">
+
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <span class="section-title">SISTEMA DE ARCHIVOS</span>
+  </div>
+
+  <div class="tree-section open" id="ls-tree">
+    <div class="tree-header" onclick="toggleTree(this)">
+      <span class="tree-title">$ ls <span style="color:var(--text-dim);font-size:.85em">— listar archivos</span></span>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="tree-body">
+      <table class="tree-table">
+        <tr><td class="t-flag">-l</td><td class="t-desc">Lista larga con detalles (permisos, tamaño, fecha)</td></tr>
+        <tr><td class="t-flag">-a</td><td class="t-desc">Muestra archivos ocultos (incluyendo . y ..)</td></tr>
+        <tr><td class="t-flag">-h</td><td class="t-desc">Tamaños en formato humano (K, M, G)</td></tr>
+        <tr><td class="t-flag">-t</td><td class="t-desc">Ordena por tiempo de modificación (más nuevos primero)</td></tr>
+        <tr><td class="t-flag">-r</td><td class="t-desc">Orden inverso</td></tr>
+        <tr><td class="t-flag">-S</td><td class="t-desc">Ordena por tamaño</td></tr>
+        <tr><td class="t-flag">-la</td><td class="t-desc">Combinación más usada: detalles + ocultos</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="tree-section" id="find-tree">
+    <div class="tree-header" onclick="toggleTree(this)">
+      <span class="tree-title">$ find <span style="color:var(--text-dim);font-size:.85em">— buscar archivos</span></span>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="tree-body">
+      <table class="tree-table">
+        <tr><td class="t-flag">-name "X"</td><td class="t-desc">Busca por nombre (sensible a mayúsculas)</td></tr>
+        <tr><td class="t-flag">-iname "X"</td><td class="t-desc">Busca por nombre (insensible a mayúsculas)</td></tr>
+        <tr><td class="t-flag">-type f</td><td class="t-desc">Solo archivos regulares</td></tr>
+        <tr><td class="t-flag">-type d</td><td class="t-desc">Solo directorios</td></tr>
+        <tr><td class="t-flag">-mtime -1</td><td class="t-desc">Modificados en el último día</td></tr>
+        <tr><td class="t-flag">-size +100k</td><td class="t-desc">Mayores de 100KB (+1M, -50k...)</td></tr>
+        <tr><td class="t-flag">-executable</td><td class="t-desc">Solo archivos ejecutables</td></tr>
+        <tr><td class="t-flag">-exec cmd {} \;</td><td class="t-desc">Ejecuta comando en cada resultado</td></tr>
+        <tr><td class="t-flag">2>/dev/null</td><td class="t-desc">Silencia errores de permiso denegado</td></tr>
+      </table>
+      <div class="tree-sub">
+        <div class="tree-sub-title">EJEMPLOS ÚTILES</div>
+        <div class="example-block">find / -type f -name "*.log" -mtime +30 2>/dev/null<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">find /var/www -type f -executable -exec ls -la {} \;<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">find / -type f -name "*backdoor*" 2>/dev/null<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tree-section" id="perm-tree">
+    <div class="tree-header" onclick="toggleTree(this)">
+      <span class="tree-title">$ chmod <span style="color:var(--text-dim);font-size:.85em">— permisos</span></span>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="tree-body">
+      <table class="tree-table">
+        <tr><td class="t-flag">+x</td><td class="t-desc">Añade permiso de ejecución</td></tr>
+        <tr><td class="t-flag">-x</td><td class="t-desc">Quita permiso de ejecución</td></tr>
+        <tr><td class="t-flag">755</td><td class="t-desc">rwxr-xr-x (ejecutables, dirs públicos)</td></tr>
+        <tr><td class="t-flag">644</td><td class="t-desc">rw-r--r-- (archivos de configuración)</td></tr>
+        <tr><td class="t-flag">600</td><td class="t-desc">rw------- (secretos, claves SSH)</td></tr>
+        <tr><td class="t-flag">700</td><td class="t-desc">rwx------ (dirs privados)</td></tr>
+        <tr><td class="t-flag">-R</td><td class="t-desc">Recursivo (aplica a subdirectorios)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="tree-section" id="cp-tree">
+    <div class="tree-header" onclick="toggleTree(this)">
+      <span class="tree-title">$ cp / mv / rm <span style="color:var(--text-dim);font-size:.85em">— copiar, mover, eliminar</span></span>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="tree-body">
+      <table class="tree-table">
+        <tr><td class="t-cmd">cp -r</td><td class="t-desc">Copia recursiva (directorios completos)</td></tr>
+        <tr><td class="t-cmd">cp -v</td><td class="t-desc">Verboso: muestra archivos copiados</td></tr>
+        <tr><td class="t-cmd">cp -i</td><td class="t-desc">Pide confirmación antes de sobrescribir</td></tr>
+        <tr><td class="t-cmd">mv -i</td><td class="t-desc">Pide confirmación antes de sobrescribir</td></tr>
+        <tr><td class="t-cmd">rm -r</td><td class="t-desc">Elimina directorio recursivamente</td></tr>
+        <tr><td class="t-cmd">rm -f</td><td class="t-desc">Fuerza sin preguntar</td></tr>
+        <tr><td class="t-cmd">rm -rf</td><td class="t-desc" style="color:var(--red)">⚠ Elimina todo sin confirmación — CUIDADO</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="tree-section" id="info-tree">
+    <div class="tree-header" onclick="toggleTree(this)">
+      <span class="tree-title">$ du / df / file <span style="color:var(--text-dim);font-size:.85em">— información de disco</span></span>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="tree-body">
+      <table class="tree-table">
+        <tr><td class="t-cmd">du -h</td><td class="t-desc">Tamaño de archivos/dirs en formato humano</td></tr>
+        <tr><td class="t-cmd">du -s</td><td class="t-desc">Solo el total del directorio</td></tr>
+        <tr><td class="t-cmd">du -sh *</td><td class="t-desc">Tamaño de cada elemento del directorio</td></tr>
+        <tr><td class="t-cmd">df -h</td><td class="t-desc">Uso de particiones en formato humano</td></tr>
+        <tr><td class="t-cmd">file archivo</td><td class="t-desc">Detecta tipo real de archivo</td></tr>
+      </table>
+      <div class="tree-sub">
+        <div class="tree-sub-title">COMBO ÚTIL</div>
+        <div class="example-block">du -sh * | sort -rh<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="section-title">PROCESOS Y SISTEMA</span>
+  </div>
+
+  <div class="tree-section" id="ps-tree">
+    <div class="tree-header" onclick="toggleTree(this)">
+      <span class="tree-title">$ ps / top / kill <span style="color:var(--text-dim);font-size:.85em">— procesos</span></span>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="tree-body">
+      <table class="tree-table">
+        <tr><td class="t-cmd">ps aux</td><td class="t-desc">Todos los procesos de todos los usuarios</td></tr>
+        <tr><td class="t-cmd">ps -ef</td><td class="t-desc">Formato estándar extendido</td></tr>
+        <tr><td class="t-cmd">ps -eo pid,user,cmd</td><td class="t-desc">Columnas específicas</td></tr>
+        <tr><td class="t-cmd">pgrep nginx</td><td class="t-desc">Solo PIDs del proceso</td></tr>
+        <tr><td class="t-cmd">pkill -9 nombre</td><td class="t-desc">Mata procesos por nombre (SIGKILL)</td></tr>
+        <tr><td class="t-cmd">kill -9 PID</td><td class="t-desc">Terminación forzosa</td></tr>
+        <tr><td class="t-cmd">kill -15 PID</td><td class="t-desc">Terminación amable (SIGTERM)</td></tr>
+        <tr><td class="t-cmd">top / htop</td><td class="t-desc">Monitor interactivo de procesos</td></tr>
+      </table>
+      <div class="tree-sub">
+        <div class="tree-sub-title">COMBO SOC</div>
+        <div class="example-block">ps aux | grep -i suspicious<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">ps aux | grep ssh | grep -v grep<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tree-section" id="users-tree">
+    <div class="tree-header" onclick="toggleTree(this)">
+      <span class="tree-title">$ usuarios / sudo / cron <span style="color:var(--text-dim);font-size:.85em">— gestión de usuarios</span></span>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="tree-body">
+      <table class="tree-table">
+        <tr><td class="t-cmd">whoami</td><td class="t-desc">Usuario actual</td></tr>
+        <tr><td class="t-cmd">id</td><td class="t-desc">UID, GID y grupos del usuario actual</td></tr>
+        <tr><td class="t-cmd">sudo cmd</td><td class="t-desc">Ejecuta como superusuario</td></tr>
+        <tr><td class="t-cmd">sudo -l</td><td class="t-desc">Lista permisos sudoers del usuario actual</td></tr>
+        <tr><td class="t-cmd">sudo -u user cmd</td><td class="t-desc">Ejecuta como otro usuario</td></tr>
+        <tr><td class="t-cmd">su - user</td><td class="t-desc">Cambia de usuario (shell completa)</td></tr>
+        <tr><td class="t-cmd">crontab -e</td><td class="t-desc">Editar tareas programadas del usuario</td></tr>
+        <tr><td class="t-cmd">crontab -l</td><td class="t-desc">Listar tareas programadas</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <span class="section-title">COMANDOS ESPECIALES & COMBOS</span>
+  </div>
+
+  <div class="combo-card searchable" data-search="history historial comandos">
+    <div><div class="combo-cmd">history | grep "cmd"</div><div class="combo-desc">Busca en historial de comandos</div></div>
+    <button class="copy-btn" style="position:static;opacity:1" onclick="copyCode(this)">COPY</button>
+  </div>
+  <div class="combo-card searchable" data-search="ps aux grep proceso buscar">
+    <div><div class="combo-cmd">ps aux | grep proceso</div><div class="combo-desc">Encuentra proceso activo por nombre</div></div>
+    <button class="copy-btn" style="position:static;opacity:1" onclick="copyCode(this)">COPY</button>
+  </div>
+  <div class="combo-card searchable" data-search="ls grep directorios solo">
+    <div><div class="combo-cmd">ls -la | grep "^d"</div><div class="combo-desc">Lista solo directorios</div></div>
+    <button class="copy-btn" style="position:static;opacity:1" onclick="copyCode(this)">COPY</button>
+  </div>
+  <div class="combo-card searchable" data-search="du sort tamaño orden">
+    <div><div class="combo-cmd">du -sh * | sort -rh</div><div class="combo-desc">Archivos ordenados por tamaño (mayor primero)</div></div>
+    <button class="copy-btn" style="position:static;opacity:1" onclick="copyCode(this)">COPY</button>
+  </div>
+  <div class="combo-card searchable" data-search="cat grep wc contar lineas">
+    <div><div class="combo-cmd">cat archivo | grep texto | wc -l</div><div class="combo-desc">Cuenta líneas que contienen un texto</div></div>
+    <button class="copy-btn" style="position:static;opacity:1" onclick="copyCode(this)">COPY</button>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num">⚠</span>
+    <span class="section-title" style="color:var(--red)">COMANDOS PELIGROSOS</span>
+  </div>
+  <div class="danger-card searchable" data-search="rm -rf peligroso eliminar todo">
+    <div class="d-cmd">rm -rf /</div>
+    <div class="d-desc">Elimina TODO el sistema de archivos — irreversible</div>
+  </div>
+  <div class="danger-card searchable" data-search="fork bomb peligroso">
+    <div class="d-cmd">:(){ :|:& };:</div>
+    <div class="d-desc">Fork bomb: colapsa el sistema por agotamiento de procesos</div>
+  </div>
+  <div class="danger-card searchable" data-search="mkfs formatear disco">
+    <div class="d-cmd">mkfs.ext4 /dev/sda1</div>
+    <div class="d-desc">Formatea el disco — destruye todos los datos</div>
+  </div>
+  <div class="danger-card searchable" data-search="dd sobrescribir disco ceros">
+    <div class="d-cmd">dd if=/dev/zero of=/dev/sda</div>
+    <div class="d-desc">Sobrescribe el disco completo con ceros</div>
+  </div>
+
+</div><!-- /panel-linux -->
+
+<!-- ══════════════════════════════════════ -->
+<!-- PANEL: RECON -->
+<!-- ══════════════════════════════════════ -->
+<div class="panel" id="panel-recon">
+
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <span class="section-title">RECONNAISSANCE</span>
+    <span class="badge badge-red">RED TEAM</span>
+  </div>
+
+  <!-- NMAP -->
+  <div class="cmd-card open searchable" id="nmap-card" data-search="nmap escaneo puertos servicios red">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>nmap</span>
+        <span class="cmd-desc">Network Mapper: escaneo de puertos, servicios y OS</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">-p &lt;puerto&gt;</span><span class="flag-val">Puerto individual o rango (-p 80, -p 1-1000)</span></div>
+        <div class="flag-row"><span class="flag-key">-p-</span><span class="flag-val">Todos los puertos (1-65535)</span></div>
+        <div class="flag-row"><span class="flag-key">-sS</span><span class="flag-val">TCP SYN scan (stealth, requiere root)</span></div>
+        <div class="flag-row"><span class="flag-key">-sU</span><span class="flag-val">UDP scan</span></div>
+        <div class="flag-row"><span class="flag-key">-sV</span><span class="flag-val">Detección de versiones de servicios</span></div>
+        <div class="flag-row"><span class="flag-key">-sC</span><span class="flag-val">Ejecuta scripts NSE por defecto</span></div>
+        <div class="flag-row"><span class="flag-key">-O</span><span class="flag-val">Detección de sistema operativo</span></div>
+        <div class="flag-row"><span class="flag-key">-A</span><span class="flag-val">Agresivo: versión + OS + scripts + traceroute</span></div>
+        <div class="flag-row"><span class="flag-key">-Pn</span><span class="flag-val">No envía ping previo (asume host up)</span></div>
+        <div class="flag-row"><span class="flag-key">-T4</span><span class="flag-val">Timing más rápido (T0=lento … T5=insane)</span></div>
+        <div class="flag-row"><span class="flag-key">--script X</span><span class="flag-val">Ejecuta script NSE específico</span></div>
+        <div class="flag-row"><span class="flag-key">-oN file</span><span class="flag-val">Output normal a archivo</span></div>
+        <div class="flag-row"><span class="flag-key">-oX file</span><span class="flag-val">Output XML</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">nmap -p- -sV -sC 192.168.1.100<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">nmap -sS -T4 --script vuln 10.0.0.0/24<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">nmap -O -Pn 192.168.1.50<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">nmap --script smb-os-discovery 192.168.1.100<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block"># CTF completo
+nmap -p- -sV -sC -oN scan.txt 10.10.10.10<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHOIS -->
+  <div class="cmd-card searchable" id="whois-card" data-search="whois dominio ip información registro">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>whois</span>
+        <span class="cmd-desc">Información WHOIS de dominios e IPs</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">-h &lt;server&gt;</span><span class="flag-val">Especifica servidor WHOIS</span></div>
+        <div class="flag-row"><span class="flag-key">--rwhois</span><span class="flag-val">Consulta RWHOIS (más detalles geográficos)</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">whois 8.8.8.8<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">whois example.com<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">whois -h whois.cymru.com 203.0.113.5<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIG / NSLOOKUP -->
+  <div class="cmd-card searchable" id="dig-card" data-search="dig nslookup host dns resolución dominio">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>dig / host / nslookup</span>
+        <span class="cmd-desc">Consultas DNS y resolución de nombres</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">dig @server dom</span><span class="flag-val">Consulta en servidor DNS específico</span></div>
+        <div class="flag-row"><span class="flag-key">dig +trace</span><span class="flag-val">Sigue la cadena de resolución completa</span></div>
+        <div class="flag-row"><span class="flag-key">dig ANY dom</span><span class="flag-val">Todos los registros DNS</span></div>
+        <div class="flag-row"><span class="flag-key">dig dom MX</span><span class="flag-val">Registros de correo</span></div>
+        <div class="flag-row"><span class="flag-key">nslookup -type=X</span><span class="flag-val">Especifica tipo de registro</span></div>
+        <div class="flag-row"><span class="flag-key">host -a dom</span><span class="flag-val">Todos los registros A/AAAA</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">dig @8.8.8.8 example.com MX<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">dig +trace example.com<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">host example.com<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">nslookup -type=TXT example.com<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /panel-recon -->
+
+<!-- ══════════════════════════════════════ -->
+<!-- PANEL: WEB / FUZZING -->
+<!-- ══════════════════════════════════════ -->
+<div class="panel" id="panel-web">
+
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="section-title">WEB SCANNING & FUZZING</span>
+    <span class="badge badge-red">RED TEAM</span>
+  </div>
+
+  <!-- CURL -->
+  <div class="cmd-card open searchable" id="curl-card" data-search="curl http request api headers post get">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>curl</span>
+        <span class="cmd-desc">Cliente HTTP para testing de APIs y web</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">-X METHOD</span><span class="flag-val">Método HTTP (GET, POST, PUT, DELETE, PATCH)</span></div>
+        <div class="flag-row"><span class="flag-key">-H 'header'</span><span class="flag-val">Añade header personalizado</span></div>
+        <div class="flag-row"><span class="flag-key">-d 'data'</span><span class="flag-val">Datos para POST (form-encoded)</span></div>
+        <div class="flag-row"><span class="flag-key">--data-raw 'json'</span><span class="flag-val">Envía JSON raw</span></div>
+        <div class="flag-row"><span class="flag-key">-b 'cookies'</span><span class="flag-val">Añade cookies a la petición</span></div>
+        <div class="flag-row"><span class="flag-key">-L</span><span class="flag-val">Sigue redirecciones automáticamente</span></div>
+        <div class="flag-row"><span class="flag-key">-I</span><span class="flag-val">Solo muestra headers de respuesta</span></div>
+        <div class="flag-row"><span class="flag-key">-v</span><span class="flag-val">Verbose: muestra headers request/response</span></div>
+        <div class="flag-row"><span class="flag-key">-s</span><span class="flag-val">Silent: sin barra de progreso</span></div>
+        <div class="flag-row"><span class="flag-key">-u user:pass</span><span class="flag-val">Autenticación básica</span></div>
+        <div class="flag-row"><span class="flag-key">-o archivo</span><span class="flag-val">Guarda respuesta en archivo</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">curl -X POST -H 'Content-Type: application/json' \
+  -d '{"key":"value"}' https://api.example.com/endpoint<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">curl -b 'session=abc123' https://example.com/admin<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">curl -L -I https://example.com<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">curl -v --user admin:password https://example.com<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SQLMAP -->
+  <div class="cmd-card searchable" id="sqlmap-card" data-search="sqlmap sql injection sqli bases datos dump">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>sqlmap</span>
+        <span class="cmd-desc">Detección y explotación automatizada de SQLi</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">-u 'URL'</span><span class="flag-val">Target URL (ej: http://site.com/page.php?id=1)</span></div>
+        <div class="flag-row"><span class="flag-key">-p param</span><span class="flag-val">Parámetro específico a testear</span></div>
+        <div class="flag-row"><span class="flag-key">--data 'data'</span><span class="flag-val">POST data</span></div>
+        <div class="flag-row"><span class="flag-key">--cookie 'c'</span><span class="flag-val">Cookies (sesiones autenticadas)</span></div>
+        <div class="flag-row"><span class="flag-key">--technique=X</span><span class="flag-val">B=Boolean, E=Error, U=Union, T=Time</span></div>
+        <div class="flag-row"><span class="flag-key">--dbs</span><span class="flag-val">Enumera bases de datos disponibles</span></div>
+        <div class="flag-row"><span class="flag-key">--tables -D db</span><span class="flag-val">Enumera tablas de la BD especificada</span></div>
+        <div class="flag-row"><span class="flag-key">--dump -D db -T t</span><span class="flag-val">Extrae datos de una tabla</span></div>
+        <div class="flag-row"><span class="flag-key">--batch</span><span class="flag-val">Modo automático (no pide confirmaciones)</span></div>
+        <div class="flag-row"><span class="flag-key">-v 3</span><span class="flag-val">Verbosity level (0-6)</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">sqlmap -u 'http://example.com/login.php?id=1' --dbs<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">sqlmap -u 'http://target.com/search.php?q=test' -p q --dump<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">sqlmap --data='user=admin&pass=test' \
+  -u 'http://example.com/login' --batch<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">sqlmap -u 'http://example.com/app.php?id=1' \
+  --tables -D vulnerable_db<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FFUF -->
+  <div class="cmd-card searchable" id="ffuf-card" data-search="ffuf fuzz directorios subdominios wordlist brute">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>ffuf</span>
+        <span class="cmd-desc">Fast Web Fuzzer: fuerza bruta de dirs, params y hosts</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">-u 'URL'</span><span class="flag-val">URL con FUZZ como placeholder</span></div>
+        <div class="flag-row"><span class="flag-key">-w wordlist</span><span class="flag-val">Wordlist a usar</span></div>
+        <div class="flag-row"><span class="flag-key">-H 'header'</span><span class="flag-val">Header personalizado</span></div>
+        <div class="flag-row"><span class="flag-key">-mc codes</span><span class="flag-val">Match por status codes (ej: -mc 200,301)</span></div>
+        <div class="flag-row"><span class="flag-key">-fc codes</span><span class="flag-val">Filter por status codes (excluir)</span></div>
+        <div class="flag-row"><span class="flag-key">-fs size</span><span class="flag-val">Filter por tamaño de respuesta</span></div>
+        <div class="flag-row"><span class="flag-key">-t threads</span><span class="flag-val">Número de threads paralelos</span></div>
+        <div class="flag-row"><span class="flag-key">-b cookies</span><span class="flag-val">Cookies para peticiones autenticadas</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">ffuf -u 'http://example.com/FUZZ' \
+  -w /usr/share/wordlists/dirb/common.txt<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">ffuf -u 'http://example.com/api/FUZZ' \
+  -w wordlist.txt -mc 200,401<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block"># Fuzz de subdominios
+ffuf -u 'http://FUZZ.example.com' \
+  -w subdomains.txt -mc 200<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /panel-web -->
+
+<!-- ══════════════════════════════════════ -->
+<!-- PANEL: LOGS / TEXT -->
+<!-- ══════════════════════════════════════ -->
+<div class="panel" id="panel-logs">
+
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <span class="section-title">LOG ANALYSIS & TEXT PROCESSING</span>
+    <span class="badge badge-soc">SOC</span>
+  </div>
+
+  <!-- GREP -->
+  <div class="cmd-card open searchable" id="grep-card" data-search="grep buscar patron logs archivos regex">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>grep</span>
+        <span class="cmd-desc">Busca patrones en archivos y streams</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">-i</span><span class="flag-val">Case-insensitive (ignora mayúsculas)</span></div>
+        <div class="flag-row"><span class="flag-key">-v</span><span class="flag-val">Invierte: muestra líneas que NO coinciden</span></div>
+        <div class="flag-row"><span class="flag-key">-n</span><span class="flag-val">Muestra número de línea del match</span></div>
+        <div class="flag-row"><span class="flag-key">-c</span><span class="flag-val">Cuenta coincidencias (no las muestra)</span></div>
+        <div class="flag-row"><span class="flag-key">-o</span><span class="flag-val">Solo la parte que coincide con el patrón</span></div>
+        <div class="flag-row"><span class="flag-key">-E</span><span class="flag-val">Regex extendida (permite |, +, ?)</span></div>
+        <div class="flag-row"><span class="flag-key">-r</span><span class="flag-val">Recursivo en directorios</span></div>
+        <div class="flag-row"><span class="flag-key">-l</span><span class="flag-val">Solo nombres de archivos con match</span></div>
+        <div class="flag-row"><span class="flag-key">-A num</span><span class="flag-val">N líneas después del match (After)</span></div>
+        <div class="flag-row"><span class="flag-key">-B num</span><span class="flag-val">N líneas antes del match (Before)</span></div>
+        <div class="flag-row"><span class="flag-key">-C num</span><span class="flag-val">N líneas antes Y después (Context)</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS SOC</h4>
+        <div class="example-block">grep 'ERROR' /var/log/syslog<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">grep -i 'failed' /var/log/auth.log | grep -c ssh<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">grep -E '(error|warning|critical)' app.log<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">grep -B2 -A2 'CRITICAL' /var/log/apache2/access.log<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block"># Buscar intentos SSH fallidos
+grep -i 'failed password' /var/log/auth.log | \
+  awk '{print $11}' | sort | uniq -c | sort -rn | head -10<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AWK -->
+  <div class="cmd-card searchable" id="awk-card" data-search="awk procesar campos columnas csv datos estructurado">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>awk</span>
+        <span class="cmd-desc">Procesamiento avanzado de campos y datos estructurados</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">-F ','</span><span class="flag-val">Especifica delimitador de campo</span></div>
+        <div class="flag-row"><span class="flag-key">'{print $N}'</span><span class="flag-val">Imprime campo N ($1, $2, $0=toda la línea)</span></div>
+        <div class="flag-row"><span class="flag-key">'BEGIN {}'</span><span class="flag-val">Ejecuta antes de procesar el archivo</span></div>
+        <div class="flag-row"><span class="flag-key">'END {}'</span><span class="flag-val">Ejecuta después de procesar el archivo</span></div>
+        <div class="flag-row"><span class="flag-key">'$9 > 400'</span><span class="flag-val">Condición: procesa solo si campo 9 > 400</span></div>
+        <div class="flag-row"><span class="flag-key">count[$1]++</span><span class="flag-val">Cuenta ocurrencias por campo (patrón frecuente)</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">awk -F',' '{ print $1, $3 }' data.csv<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block"># Contar IPs en access.log
+awk -F' ' '{ count[$1]++ } END { for (ip in count) print ip, count[ip] }' access.log<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block"># Solo errores 4xx/5xx
+awk '$9 > 400 { print $0 }' access.log<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block"># Suma columna
+awk 'BEGIN { sum=0 } { sum+=$2 } END { print sum }' numbers.txt<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SED -->
+  <div class="cmd-card searchable" id="sed-card" data-search="sed sustituir reemplazar editar stream texto">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>sed</span>
+        <span class="cmd-desc">Stream editor: sustituye, elimina y transforma texto</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">'s/X/Y/'</span><span class="flag-val">Sustituye primera ocurrencia por línea</span></div>
+        <div class="flag-row"><span class="flag-key">'s/X/Y/g'</span><span class="flag-val">Global: todas las ocurrencias en la línea</span></div>
+        <div class="flag-row"><span class="flag-key">-i</span><span class="flag-val">In-place: modifica el archivo original</span></div>
+        <div class="flag-row"><span class="flag-key">-i.bak</span><span class="flag-val">In-place con backup (.bak)</span></div>
+        <div class="flag-row"><span class="flag-key">'/patron/d'</span><span class="flag-val">Elimina líneas que contienen el patrón</span></div>
+        <div class="flag-row"><span class="flag-key">-n '10,20p'</span><span class="flag-val">Extrae solo líneas 10-20</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">sed 's/192.168.1.1/10.0.0.1/g' config.txt<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">sed -i 's/oldvalue/newvalue/g' file.txt<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">sed '/^#/d' config.txt   # elimina comentarios<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">sed -n '10,20p' largefile.txt<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUT / SORT / UNIQ / WC -->
+  <div class="cmd-card searchable" id="cut-card" data-search="cut sort uniq wc contar ordenar columnas">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>cut / sort / uniq / wc</span>
+        <span class="cmd-desc">Herramientas de procesamiento de texto en pipeline</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>CUT · SORT · UNIQ · WC</h4>
+        <div class="flag-row"><span class="flag-key">cut -d':' -f1</span><span class="flag-val">Extrae campo 1 separado por ':'</span></div>
+        <div class="flag-row"><span class="flag-key">cut -c1-10</span><span class="flag-val">Extrae los primeros 10 caracteres</span></div>
+        <div class="flag-row"><span class="flag-key">sort -n</span><span class="flag-val">Orden numérico</span></div>
+        <div class="flag-row"><span class="flag-key">sort -r</span><span class="flag-val">Orden inverso</span></div>
+        <div class="flag-row"><span class="flag-key">sort -rn</span><span class="flag-val">Numérico inverso (mayor primero)</span></div>
+        <div class="flag-row"><span class="flag-key">sort -rh</span><span class="flag-val">Human-readable inverso (para du -h)</span></div>
+        <div class="flag-row"><span class="flag-key">uniq -c</span><span class="flag-val">Cuenta ocurrencias consecutivas</span></div>
+        <div class="flag-row"><span class="flag-key">wc -l</span><span class="flag-val">Cuenta líneas</span></div>
+        <div class="flag-row"><span class="flag-key">wc -w</span><span class="flag-val">Cuenta palabras</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>PIPELINE SOC CLÁSICO</h4>
+        <div class="example-block"># Top 10 IPs en auth.log
+grep 'Failed' /var/log/auth.log | \
+  awk '{print $11}' | sort | uniq -c | sort -rn | head -10<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">cut -d':' -f1 /etc/passwd | sort<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">cat access.log | cut -d' ' -f7 | sort | uniq -c | sort -rn<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEAD / TAIL -->
+  <div class="cmd-card searchable" id="tail-card" data-search="tail head cat less ver contenido archivo logs tiempo real">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>head / tail / cat / less</span>
+        <span class="cmd-desc">Ver contenido de archivos</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">cat archivo</span><span class="flag-val">Muestra contenido completo</span></div>
+        <div class="flag-row"><span class="flag-key">head -n N</span><span class="flag-val">Primeras N líneas (defecto 10)</span></div>
+        <div class="flag-row"><span class="flag-key">tail -n N</span><span class="flag-val">Últimas N líneas (defecto 10)</span></div>
+        <div class="flag-row"><span class="flag-key">tail -f</span><span class="flag-val">Sigue el archivo en tiempo real (logs en vivo)</span></div>
+        <div class="flag-row"><span class="flag-key">less archivo</span><span class="flag-val">Paginación interactiva (q para salir)</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">tail -f /var/log/auth.log<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">tail -f /var/ossec/logs/ossec.log<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">tail -100 /var/log/syslog | grep -i error<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /panel-logs -->
+
+<!-- ══════════════════════════════════════ -->
+<!-- PANEL: TRÁFICO RED -->
+<!-- ══════════════════════════════════════ -->
+<div class="panel" id="panel-network">
+
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <span class="section-title">NETWORK TRAFFIC ANALYSIS</span>
+    <span class="badge badge-soc">SOC</span>
+  </div>
+
+  <!-- TCPDUMP -->
+  <div class="cmd-card open searchable" id="tcpdump-card" data-search="tcpdump captura paquetes red pcap interfaz filtro">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>tcpdump</span>
+        <span class="cmd-desc">Captura y análisis de paquetes en tiempo real</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">-i eth0</span><span class="flag-val">Interfaz de red a capturar</span></div>
+        <div class="flag-row"><span class="flag-key">-i any</span><span class="flag-val">Todas las interfaces</span></div>
+        <div class="flag-row"><span class="flag-key">-c N</span><span class="flag-val">Captura N paquetes y sale</span></div>
+        <div class="flag-row"><span class="flag-key">-w file.pcap</span><span class="flag-val">Guarda captura en archivo pcap</span></div>
+        <div class="flag-row"><span class="flag-key">-r file.pcap</span><span class="flag-val">Lee desde archivo pcap existente</span></div>
+        <div class="flag-row"><span class="flag-key">-n</span><span class="flag-val">No resuelve DNS (solo IPs y puertos numéricos)</span></div>
+        <div class="flag-row"><span class="flag-key">-A</span><span class="flag-val">Muestra payload en ASCII</span></div>
+        <div class="flag-row"><span class="flag-key">-X</span><span class="flag-val">Hexdump + ASCII del payload</span></div>
+        <div class="flag-row"><span class="flag-key">-vv</span><span class="flag-val">Extra verbose</span></div>
+        <div class="flag-row"><span class="flag-key">'host IP'</span><span class="flag-val">Filtro: solo tráfico hacia/desde IP</span></div>
+        <div class="flag-row"><span class="flag-key">'port N'</span><span class="flag-val">Filtro: solo tráfico en puerto N</span></div>
+        <div class="flag-row"><span class="flag-key">'src IP'</span><span class="flag-val">Solo tráfico origen</span></div>
+        <div class="flag-row"><span class="flag-key">'dst IP'</span><span class="flag-val">Solo tráfico destino</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">sudo tcpdump -i eth0 -w capture.pcap<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">sudo tcpdump -i eth0 host 192.168.1.100<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">sudo tcpdump -r capture.pcap | head -20<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">sudo tcpdump -i eth0 'port 80' -A | grep -i 'user-agent'<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TSHARK -->
+  <div class="cmd-card searchable" id="tshark-card" data-search="tshark wireshark pcap filtro protocolos campos">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>tshark</span>
+        <span class="cmd-desc">CLI de Wireshark: análisis avanzado de tráfico</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">-i eth0</span><span class="flag-val">Captura en interfaz</span></div>
+        <div class="flag-row"><span class="flag-key">-r file.pcap</span><span class="flag-val">Lee desde pcap</span></div>
+        <div class="flag-row"><span class="flag-key">-w file.pcap</span><span class="flag-val">Escribe captura en pcap</span></div>
+        <div class="flag-row"><span class="flag-key">-Y 'filtro'</span><span class="flag-val">Filtro de visualización (igual que GUI)</span></div>
+        <div class="flag-row"><span class="flag-key">-T fields</span><span class="flag-val">Output estructurado por campos</span></div>
+        <div class="flag-row"><span class="flag-key">-e campo</span><span class="flag-val">Campo específico (ip.src, http.request.uri...)</span></div>
+        <div class="flag-row"><span class="flag-key">-c N</span><span class="flag-val">Número máximo de paquetes</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">tshark -i eth0 -Y 'http' -T fields -e ip.src -e http.request.uri<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">tshark -r capture.pcap -Y 'dns'<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">tshark -i eth0 -Y 'tcp.flags.syn==1'  # Solo SYN<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SS / NETSTAT -->
+  <div class="cmd-card searchable" id="ss-card" data-search="ss netstat puertos conexiones red escuchando tcp udp">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>ss / netstat</span>
+        <span class="cmd-desc">Conexiones de red activas y puertos abiertos</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">-t</span><span class="flag-val">TCP sockets</span></div>
+        <div class="flag-row"><span class="flag-key">-u</span><span class="flag-val">UDP sockets</span></div>
+        <div class="flag-row"><span class="flag-key">-l</span><span class="flag-val">Solo sockets en modo LISTENING</span></div>
+        <div class="flag-row"><span class="flag-key">-n</span><span class="flag-val">IPs numéricas (sin resolver DNS)</span></div>
+        <div class="flag-row"><span class="flag-key">-p</span><span class="flag-val">Muestra proceso asociado a la conexión</span></div>
+        <div class="flag-row"><span class="flag-key">-a</span><span class="flag-val">Todos los sockets (listening + established)</span></div>
+        <div class="flag-row"><span class="flag-key">-r</span><span class="flag-val">Tabla de enrutamiento</span></div>
+        <div class="flag-row"><span class="flag-key">-s</span><span class="flag-val">Estadísticas por protocolo</span></div>
+        <div class="flag-row"><span class="flag-key">ss -tulnp</span><span class="flag-val">Combo más usado: TCP+UDP, listening, numérico, PID</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">ss -tulnp<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">netstat -tulnp | grep LISTEN<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">ss -tulnp | grep ESTABLISHED<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">netstat -antp | grep :80<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /panel-network -->
+
+<!-- ══════════════════════════════════════ -->
+<!-- PANEL: CREDENCIALES -->
+<!-- ══════════════════════════════════════ -->
+<div class="panel" id="panel-creds">
+
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <span class="section-title">CREDENTIAL ATTACKS & BRUTE FORCE</span>
+    <span class="badge badge-red">RED TEAM</span>
+  </div>
+
+  <!-- HYDRA -->
+  <div class="cmd-card open searchable" id="hydra-card" data-search="hydra brute force diccionario ssh ftp http credenciales">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>hydra</span>
+        <span class="cmd-desc">Ataques de diccionario paralelos contra servicios</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">-l login</span><span class="flag-val">Usuario único</span></div>
+        <div class="flag-row"><span class="flag-key">-L file</span><span class="flag-val">Archivo con lista de usuarios</span></div>
+        <div class="flag-row"><span class="flag-key">-p pass</span><span class="flag-val">Contraseña única</span></div>
+        <div class="flag-row"><span class="flag-key">-P file</span><span class="flag-val">Archivo con lista de contraseñas</span></div>
+        <div class="flag-row"><span class="flag-key">-C file</span><span class="flag-val">Pares login:password en un archivo</span></div>
+        <div class="flag-row"><span class="flag-key">-t N</span><span class="flag-val">N threads paralelos</span></div>
+        <div class="flag-row"><span class="flag-key">-f</span><span class="flag-val">Sale al encontrar credenciales válidas</span></div>
+        <div class="flag-row"><span class="flag-key">-v</span><span class="flag-val">Verbose: muestra intentos</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">hydra -l admin -P /usr/share/wordlists/rockyou.txt \
+  ssh://192.168.1.100 -t 4<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">hydra -L users.txt -P passwords.txt \
+  http-post-form://example.com/login:user=^USER^&pass=^PASS^:F=Invalid<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">hydra -l root -P rockyou.txt -f ftp://target.com<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HASHCAT -->
+  <div class="cmd-card searchable" id="hashcat-card" data-search="hashcat hash crack gpu md5 ntlm bcrypt diccionario">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>hashcat</span>
+        <span class="cmd-desc">Crack de hashes con GPU acceleration</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">-a 0</span><span class="flag-val">Modo diccionario</span></div>
+        <div class="flag-row"><span class="flag-key">-a 1</span><span class="flag-val">Modo combinación</span></div>
+        <div class="flag-row"><span class="flag-key">-a 3</span><span class="flag-val">Brute force (máscaras)</span></div>
+        <div class="flag-row"><span class="flag-key">-m 0</span><span class="flag-val">Tipo hash: MD5</span></div>
+        <div class="flag-row"><span class="flag-key">-m 1800</span><span class="flag-val">Tipo hash: bcrypt</span></div>
+        <div class="flag-row"><span class="flag-key">-m 5500</span><span class="flag-val">Tipo hash: NTLM</span></div>
+        <div class="flag-row"><span class="flag-key">-r rules</span><span class="flag-val">Reglas de mutación</span></div>
+        <div class="flag-row"><span class="flag-key">-O</span><span class="flag-val">Optimized: más rápido</span></div>
+        <div class="flag-row"><span class="flag-key">-w 4</span><span class="flag-val">Workload máximo (nightmare mode)</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">hashcat -a 0 -m 0 hashes.txt /usr/share/wordlists/rockyou.txt<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">hashcat -a 3 -m 1800 hash.txt ?a?a?a?a   # brute 4 chars<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">hashcat -a 0 -m 5500 ntlm_hashes.txt wordlist.txt --rules=best64<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JOHN -->
+  <div class="cmd-card searchable" id="john-card" data-search="john the ripper hash crack archivos encriptados">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>john the ripper</span>
+        <span class="cmd-desc">Cracker versátil de hashes y archivos encriptados</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">--wordlist=file</span><span class="flag-val">Ataque con diccionario</span></div>
+        <div class="flag-row"><span class="flag-key">--rules</span><span class="flag-val">Aplica reglas de mutación al diccionario</span></div>
+        <div class="flag-row"><span class="flag-key">--format=type</span><span class="flag-val">Especifica tipo de hash (auto-detectable)</span></div>
+        <div class="flag-row"><span class="flag-key">--show</span><span class="flag-val">Muestra contraseñas ya crackeadas</span></div>
+        <div class="flag-row"><span class="flag-key">--incremental</span><span class="flag-val">Brute force incremental</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">john --wordlist=rockyou.txt hashes.txt<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">john --format=bcrypt --wordlist=dict.txt bcrypt_hashes.txt<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">john --show hashes.txt<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /panel-creds -->
+
+<!-- ══════════════════════════════════════ -->
+<!-- PANEL: POST-EXPLOTACIÓN -->
+<!-- ══════════════════════════════════════ -->
+<div class="panel" id="panel-postexp">
+
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <span class="section-title">POST-EXPLOITATION & LATERAL MOVEMENT</span>
+    <span class="badge badge-red">RED TEAM</span>
+  </div>
+
+  <!-- SSH -->
+  <div class="cmd-card open searchable" id="ssh-card" data-search="ssh remoto acceso tunnel port forwarding socks">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>ssh</span>
+        <span class="cmd-desc">Acceso remoto seguro y tunneling</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">-p puerto</span><span class="flag-val">Puerto SSH (defecto 22)</span></div>
+        <div class="flag-row"><span class="flag-key">-l usuario</span><span class="flag-val">Usuario para conectar</span></div>
+        <div class="flag-row"><span class="flag-key">-i keyfile</span><span class="flag-val">Archivo de clave privada</span></div>
+        <div class="flag-row"><span class="flag-key">-N</span><span class="flag-val">No ejecuta comando (útil para tunneling puro)</span></div>
+        <div class="flag-row"><span class="flag-key">-D puerto</span><span class="flag-val">Dynamic port forwarding (SOCKS proxy)</span></div>
+        <div class="flag-row"><span class="flag-key">-L local:remote</span><span class="flag-val">Local port forwarding</span></div>
+        <div class="flag-row"><span class="flag-key">-R remote:local</span><span class="flag-val">Remote port forwarding</span></div>
+        <div class="flag-row"><span class="flag-key">-f</span><span class="flag-val">Ejecuta en background</span></div>
+        <div class="flag-row"><span class="flag-key">-v</span><span class="flag-val">Verbose (debug de conexión)</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">ssh -i ~/.ssh/id_rsa user@192.168.1.100<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block"># Tunnel MySQL
+ssh -L 3306:localhost:3306 user@remote.com<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block"># SOCKS proxy
+ssh -D 9999 user@proxy.com<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">ssh -v user@target   # debug SSH issues<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCP -->
+  <div class="cmd-card searchable" id="scp-card" data-search="scp copia segura archivos ssh upload download">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>scp</span>
+        <span class="cmd-desc">Copia segura de archivos vía SSH</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">-r</span><span class="flag-val">Recursivo (directorios completos)</span></div>
+        <div class="flag-row"><span class="flag-key">-p</span><span class="flag-val">Preserva permisos y timestamps</span></div>
+        <div class="flag-row"><span class="flag-key">-P puerto</span><span class="flag-val">Puerto SSH personalizado</span></div>
+        <div class="flag-row"><span class="flag-key">-i key</span><span class="flag-val">Clave privada para autenticación</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block"># Upload
+scp -i ~/.ssh/key file.txt user@target:/home/user/<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block"># Download
+scp -P 2222 user@target:/var/log/app.log .<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">scp -r /data/backup user@backup.server:/backups/<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /panel-postexp -->
+
+<!-- ══════════════════════════════════════ -->
+<!-- PANEL: SOC / MONITOR -->
+<!-- ══════════════════════════════════════ -->
+<div class="panel" id="panel-soc">
+
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <span class="section-title">SOC TOOLS & MONITORING</span>
+    <span class="badge badge-soc">SOC</span>
+  </div>
+
+  <!-- WAZUH -->
+  <div class="cmd-card open searchable" id="wazuh-card" data-search="wazuh agente siem monitoreo seguridad ossec">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>wazuh-agent / wazuh-control</span>
+        <span class="cmd-desc">Gestión del agente y manager de Wazuh SIEM</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>COMANDOS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">systemctl status wazuh-agent</span><span class="flag-val">Estado del agente</span></div>
+        <div class="flag-row"><span class="flag-key">systemctl status wazuh-manager</span><span class="flag-val">Estado del manager</span></div>
+        <div class="flag-row"><span class="flag-key">/var/ossec/bin/wazuh-control status</span><span class="flag-val">Estado via script de control</span></div>
+        <div class="flag-row"><span class="flag-key">tail -f /var/ossec/logs/ossec.log</span><span class="flag-val">Log principal en tiempo real</span></div>
+        <div class="flag-row"><span class="flag-key">tail -f /var/ossec/logs/active-response.log</span><span class="flag-val">Ver respuestas activas</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">sudo /var/ossec/bin/wazuh-control status<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">sudo systemctl restart wazuh-agent<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">tail -f /var/ossec/logs/ossec.log<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block"># Ver alertas recientes
+tail -100 /var/ossec/logs/alerts/alerts.log | grep -i "level: [89]\|level: 1[0-5]"<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SYSTEMCTL -->
+  <div class="cmd-card searchable" id="systemctl-card" data-search="systemctl servicios systemd iniciar detener estado enable">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>systemctl</span>
+        <span class="cmd-desc">Gestión de servicios systemd</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">status servicio</span><span class="flag-val">Estado del servicio</span></div>
+        <div class="flag-row"><span class="flag-key">start/stop/restart</span><span class="flag-val">Controlar servicio</span></div>
+        <div class="flag-row"><span class="flag-key">enable/disable</span><span class="flag-val">Activar/desactivar inicio automático</span></div>
+        <div class="flag-row"><span class="flag-key">list-units --all</span><span class="flag-val">Lista todos los servicios y su estado</span></div>
+        <div class="flag-row"><span class="flag-key">is-active servicio</span><span class="flag-val">Comprueba si está activo (retorna 0/1)</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">sudo systemctl status wazuh-manager<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">sudo systemctl restart docker<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">sudo systemctl enable opensearch   # auto-boot<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">systemctl list-units --type=service --state=running<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JOURNALCTL -->
+  <div class="cmd-card searchable" id="journalctl-card" data-search="journalctl logs systemd servicios kernel boot tiempo">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>journalctl</span>
+        <span class="cmd-desc">Visualiza logs de systemd-journal</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">-u unit</span><span class="flag-val">Logs de servicio específico</span></div>
+        <div class="flag-row"><span class="flag-key">-n N</span><span class="flag-val">Últimas N líneas</span></div>
+        <div class="flag-row"><span class="flag-key">-f</span><span class="flag-val">Follow (como tail -f)</span></div>
+        <div class="flag-row"><span class="flag-key">-b</span><span class="flag-val">Logs del boot actual</span></div>
+        <div class="flag-row"><span class="flag-key">--since 'X'</span><span class="flag-val">Desde cierta hora/fecha</span></div>
+        <div class="flag-row"><span class="flag-key">--until 'X'</span><span class="flag-val">Hasta cierta hora/fecha</span></div>
+        <div class="flag-row"><span class="flag-key">-p err</span><span class="flag-val">Filtro por prioridad (err, warn, info, debug)</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">journalctl -u wazuh-manager -n 50<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">journalctl -u ssh.service --since '2 hours ago'<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">journalctl -f -u docker   # sigue logs docker<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">journalctl -p err -b   # solo errores del boot actual<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /panel-soc -->
+
+<!-- ══════════════════════════════════════ -->
+<!-- PANEL: FORENSE -->
+<!-- ══════════════════════════════════════ -->
+<div class="panel" id="panel-forense">
+
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <span class="section-title">FORENSICS & MEMORY ANALYSIS</span>
+    <span class="badge badge-soc">SOC</span>
+  </div>
+
+  <!-- VOLATILITY -->
+  <div class="cmd-card open searchable" id="volatility-card" data-search="volatility memoria ram dump forense análisis procesos">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>volatility</span>
+        <span class="cmd-desc">Análisis forense de memory dumps (RAM)</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">-f dump.bin</span><span class="flag-val">Archivo de memory dump</span></div>
+        <div class="flag-row"><span class="flag-key">--profile=X</span><span class="flag-val">Perfil de SO/kernel (detectar con imageinfo)</span></div>
+        <div class="flag-row"><span class="flag-key">imageinfo</span><span class="flag-val">Detecta perfil automáticamente</span></div>
+        <div class="flag-row"><span class="flag-key">pslist</span><span class="flag-val">Lista procesos activos en memoria</span></div>
+        <div class="flag-row"><span class="flag-key">dlllist -p PID</span><span class="flag-val">DLLs cargadas por proceso</span></div>
+        <div class="flag-row"><span class="flag-key">connscan</span><span class="flag-val">Conexiones de red (incluyendo cerradas)</span></div>
+        <div class="flag-row"><span class="flag-key">filescan</span><span class="flag-val">Archivos abiertos/accedidos en memoria</span></div>
+        <div class="flag-row"><span class="flag-key">-D outdir</span><span class="flag-val">Directorio de salida para volcados</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">volatility -f memory.dmp imageinfo<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">volatility -f dump.bin --profile=Win7SP1x64 pslist<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">volatility -f dump.bin --profile=Win7SP1x64 \
+  connscan | grep ESTABLISHED<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STRINGS -->
+  <div class="cmd-card searchable" id="strings-card" data-search="strings binario ascii unicode texto extraer malware">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>strings</span>
+        <span class="cmd-desc">Extrae texto ASCII/Unicode legible de binarios</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">-a</span><span class="flag-val">Busca en todo el archivo (no solo secciones)</span></div>
+        <div class="flag-row"><span class="flag-key">-n N</span><span class="flag-val">Mínimo N caracteres (defecto 4)</span></div>
+        <div class="flag-row"><span class="flag-key">-e a</span><span class="flag-val">Encoding ASCII (defecto)</span></div>
+        <div class="flag-row"><span class="flag-key">-e l</span><span class="flag-val">Encoding UTF-16LE (Windows common)</span></div>
+        <div class="flag-row"><span class="flag-key">-e b</span><span class="flag-val">Encoding UTF-16BE</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">strings malware.exe | grep http<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">strings dump.bin | grep -i password<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">strings -e l suspicious.exe   # UTF-16 encoding<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /panel-forense -->
+
+<!-- ══════════════════════════════════════ -->
+<!-- PANEL: HARDENING -->
+<!-- ══════════════════════════════════════ -->
+<div class="panel" id="panel-hardening">
+
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <span class="section-title">LINUX UTILITIES & SYSTEM HARDENING</span>
+    <span class="badge badge-linux">LINUX</span>
+  </div>
+
+  <!-- UFW / FIREWALL-CMD -->
+  <div class="cmd-card open searchable" id="ufw-card" data-search="ufw firewall puertos reglas abrir cerrar iptables">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>ufw / firewall-cmd</span>
+        <span class="cmd-desc">Gestión de firewall: puertos, servicios y reglas</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>UFW (Ubuntu) · FIREWALLD</h4>
+        <div class="flag-row"><span class="flag-key">ufw status</span><span class="flag-val">Estado del firewall</span></div>
+        <div class="flag-row"><span class="flag-key">ufw allow 22/tcp</span><span class="flag-val">Permite SSH</span></div>
+        <div class="flag-row"><span class="flag-key">ufw deny 23</span><span class="flag-val">Bloquea Telnet</span></div>
+        <div class="flag-row"><span class="flag-key">ufw enable</span><span class="flag-val">Activa el firewall</span></div>
+        <div class="flag-row"><span class="flag-key">firewall-cmd --list-all</span><span class="flag-val">Config actual (firewalld)</span></div>
+        <div class="flag-row"><span class="flag-key">firewall-cmd --add-port=X/tcp</span><span class="flag-val">Abre puerto</span></div>
+        <div class="flag-row"><span class="flag-key">--permanent</span><span class="flag-val">Persistente entre reboots</span></div>
+        <div class="flag-row"><span class="flag-key">firewall-cmd --reload</span><span class="flag-val">Recarga reglas</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw enable<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">sudo firewall-cmd --permanent --add-port=443/tcp
+sudo firewall-cmd --reload<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUDO -->
+  <div class="cmd-card searchable" id="sudo-card" data-search="sudo sudoers privilegios root acceso administrativo">
+    <div class="cmd-card-header" onclick="toggleCard(this)">
+      <div style="display:flex;align-items:center">
+        <span class="cmd-name"><span class="prompt">$ </span>sudo / sudoers</span>
+        <span class="cmd-desc">Ejecución privilegiada y control de acceso</span>
+      </div>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="cmd-body">
+      <div class="flags-section">
+        <h4>FLAGS PRINCIPALES</h4>
+        <div class="flag-row"><span class="flag-key">sudo cmd</span><span class="flag-val">Ejecuta como root</span></div>
+        <div class="flag-row"><span class="flag-key">sudo -u user cmd</span><span class="flag-val">Ejecuta como otro usuario</span></div>
+        <div class="flag-row"><span class="flag-key">sudo -l</span><span class="flag-val">Lista permisos sudoers del usuario actual</span></div>
+        <div class="flag-row"><span class="flag-key">visudo</span><span class="flag-val">Edita /etc/sudoers con validación de sintaxis</span></div>
+        <div class="flag-row"><span class="flag-key">sudo -v</span><span class="flag-val">Refresca credenciales (extiende timeout)</span></div>
+        <div class="flag-row"><span class="flag-key">sudo -k</span><span class="flag-val">Olvida credenciales (logout de sudo)</span></div>
+      </div>
+      <div class="examples-section">
+        <h4>EJEMPLOS</h4>
+        <div class="example-block">sudo -l   # ver qué puedes ejecutar como root<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">sudo -u postgres psql<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">sudo systemctl restart nginx<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /panel-hardening -->
+
+<!-- ══════════════════════════════════════ -->
+<!-- PANEL: BASH SCRIPTING -->
+<!-- ══════════════════════════════════════ -->
+<div class="panel" id="panel-bash">
+
+  <div class="section-header">
+    <span class="section-num">10</span>
+    <span class="section-title">BASH SCRIPTING</span>
+    <span class="badge badge-linux">LINUX</span>
+  </div>
+
+  <div class="tree-section open" id="bash-vars">
+    <div class="tree-header" onclick="toggleTree(this)">
+      <span class="tree-title">Variables & I/O</span>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="tree-body">
+      <table class="tree-table">
+        <tr><td class="t-flag">$VAR</td><td class="t-desc">Usar variable</td></tr>
+        <tr><td class="t-flag">$(comando)</td><td class="t-desc">Sustitución de comando</td></tr>
+        <tr><td class="t-flag">$((expr))</td><td class="t-desc">Cálculo matemático</td></tr>
+        <tr><td class="t-flag">echo -e</td><td class="t-desc">Interpretar escapes (\n, \t, colores)</td></tr>
+        <tr><td class="t-flag">echo -n</td><td class="t-desc">Sin salto de línea al final</td></tr>
+        <tr><td class="t-flag">read -p "msg"</td><td class="t-desc">Lee input con mensaje</td></tr>
+        <tr><td class="t-flag">read -s</td><td class="t-desc">Silencioso (para passwords)</td></tr>
+        <tr><td class="t-flag">read -t N</td><td class="t-desc">Timeout de N segundos</td></tr>
+        <tr><td class="t-flag">export VAR</td><td class="t-desc">Exporta variable al entorno</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="tree-section" id="bash-cond">
+    <div class="tree-header" onclick="toggleTree(this)">
+      <span class="tree-title">Condicionales & Operadores</span>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="tree-body">
+      <div class="tree-sub-title">NUMÉRICOS</div>
+      <table class="tree-table">
+        <tr><td class="t-flag">-eq</td><td class="t-desc">Equal (igual)</td></tr>
+        <tr><td class="t-flag">-ne</td><td class="t-desc">Not equal (diferente)</td></tr>
+        <tr><td class="t-flag">-lt</td><td class="t-desc">Less than (menor que)</td></tr>
+        <tr><td class="t-flag">-le</td><td class="t-desc">Less or equal (menor o igual)</td></tr>
+        <tr><td class="t-flag">-gt</td><td class="t-desc">Greater than (mayor que)</td></tr>
+        <tr><td class="t-flag">-ge</td><td class="t-desc">Greater or equal (mayor o igual)</td></tr>
+      </table>
+      <div class="tree-sub-title" style="margin-top:8px">ARCHIVOS</div>
+      <table class="tree-table">
+        <tr><td class="t-flag">-e archivo</td><td class="t-desc">Existe</td></tr>
+        <tr><td class="t-flag">-f archivo</td><td class="t-desc">Es archivo regular</td></tr>
+        <tr><td class="t-flag">-d ruta</td><td class="t-desc">Es directorio</td></tr>
+        <tr><td class="t-flag">-s archivo</td><td class="t-desc">Tamaño mayor que 0</td></tr>
+        <tr><td class="t-flag">-r / -w / -x</td><td class="t-desc">Se puede leer / escribir / ejecutar</td></tr>
+      </table>
+      <div class="tree-sub-title" style="margin-top:8px">CADENAS</div>
+      <table class="tree-table">
+        <tr><td class="t-flag">= / !=</td><td class="t-desc">Igual / diferente</td></tr>
+        <tr><td class="t-flag">-z cadena</td><td class="t-desc">Está vacía</td></tr>
+        <tr><td class="t-flag">-n cadena</td><td class="t-desc">No está vacía</td></tr>
+      </table>
+      <div class="tree-sub-title" style="margin-top:8px">LÓGICOS</div>
+      <table class="tree-table">
+        <tr><td class="t-flag">!</td><td class="t-desc">NOT</td></tr>
+        <tr><td class="t-flag">-a</td><td class="t-desc">AND (dentro de [ ])</td></tr>
+        <tr><td class="t-flag">-o</td><td class="t-desc">OR (dentro de [ ])</td></tr>
+        <tr><td class="t-flag">&&</td><td class="t-desc">AND (fuera de corchetes)</td></tr>
+        <tr><td class="t-flag">||</td><td class="t-desc">OR (fuera de corchetes)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="tree-section" id="bash-loops">
+    <div class="tree-header" onclick="toggleTree(this)">
+      <span class="tree-title">Bucles & Control de Flujo</span>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="tree-body">
+      <div class="example-block">for VAR in lista; do
+  echo "$VAR"
+done<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      <div class="example-block">while [ condición ]; do
+  # acción
+done<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      <div class="example-block">if [ condición ]; then
+  # acción
+elif [ otra ]; then
+  # otra acción
+else
+  # default
+fi<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      <div class="example-block">case $VAR in
+  opcion1) acción ;;
+  opcion2) acción ;;
+  *) default ;;
+esac<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+    </div>
+  </div>
+
+  <div class="tree-section" id="bash-redirect">
+    <div class="tree-header" onclick="toggleTree(this)">
+      <span class="tree-title">Redirecciones & Pipes</span>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="tree-body">
+      <table class="tree-table">
+        <tr><td class="t-flag">&gt; archivo</td><td class="t-desc">Sobrescribe archivo con stdout</td></tr>
+        <tr><td class="t-flag">&gt;&gt; archivo</td><td class="t-desc">Añade al final del archivo</td></tr>
+        <tr><td class="t-flag">2&gt; archivo</td><td class="t-desc">Redirige stderr a archivo</td></tr>
+        <tr><td class="t-flag">&amp;&gt; archivo</td><td class="t-desc">Redirige stdout Y stderr</td></tr>
+        <tr><td class="t-flag">2&gt;/dev/null</td><td class="t-desc">Descarta mensajes de error</td></tr>
+        <tr><td class="t-flag">cmd1 | cmd2</td><td class="t-desc">Conecta stdout de cmd1 con stdin de cmd2</td></tr>
+        <tr><td class="t-flag">cmd &</td><td class="t-desc">Ejecuta en background</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="tree-section" id="bash-tar">
+    <div class="tree-header" onclick="toggleTree(this)">
+      <span class="tree-title">tar / compresión</span>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="tree-body">
+      <table class="tree-table">
+        <tr><td class="t-flag">-c</td><td class="t-desc">Crear archivo tar</td></tr>
+        <tr><td class="t-flag">-x</td><td class="t-desc">Extraer archivo tar</td></tr>
+        <tr><td class="t-flag">-z</td><td class="t-desc">Comprimir/descomprimir con gzip (.tar.gz)</td></tr>
+        <tr><td class="t-flag">-v</td><td class="t-desc">Verboso: lista archivos procesados</td></tr>
+        <tr><td class="t-flag">-f archivo</td><td class="t-desc">Especifica nombre del archivo tar</td></tr>
+      </table>
+      <div class="tree-sub">
+        <div class="example-block">tar -czf backup.tar.gz /directorio/<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <div class="example-block">tar -xzf backup.tar.gz<button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /panel-bash -->
+
+</div><!-- /content -->
+</div><!-- /main -->
+
+<!-- STATS -->
+<div id="stats">
+  <div>comandos: <span class="stat-val" id="stat-cmds">–</span></div>
+  <div>flags: <span class="stat-val" id="stat-flags">–</span></div>
+  <div>secciones: <span class="stat-val">11</span></div>
+  <div style="margin-left:auto;color:var(--border-bright)">última actualización: ABRIL 2026</div>
+</div>
+
+<script>
+// ── TABS ──
+const tabBtns = document.querySelectorAll('.tab-btn');
+const panels = document.querySelectorAll('.panel');
+
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    tabBtns.forEach(b => b.classList.remove('active'));
+    panels.forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+    buildSidebar(tab);
+    updateCount();
+  });
+});
+
+// ── TOGGLE CARDS ──
+function toggleCard(header) {
+  const card = header.closest('.cmd-card');
+  card.classList.toggle('open');
+}
+function toggleTree(header) {
+  const section = header.closest('.tree-section');
+  section.classList.toggle('open');
+}
+
+// ── SIDEBAR ──
+function buildSidebar(tab) {
+  const panel = document.getElementById('panel-' + tab);
+  const sb = document.getElementById('sidebar-content');
+  sb.innerHTML = '';
+  
+  // cmd-cards
+  panel.querySelectorAll('.cmd-card').forEach(card => {
+    const name = card.querySelector('.cmd-name')?.textContent.replace('$ ','').trim();
+    const desc = card.querySelector('.cmd-desc')?.textContent.trim();
+    if (!name) return;
+    const a = document.createElement('a');
+    a.className = 'sidebar-link';
+    a.href = '#';
+    a.innerHTML = `<span class="cmd-label">$</span>${name}`;
+    a.title = desc || '';
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth', block:'start'});
+      card.classList.add('open');
+      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+      a.classList.add('active');
+    });
+    sb.appendChild(a);
+  });
+  
+  // tree-sections
+  panel.querySelectorAll('.tree-section').forEach(sec => {
+    const name = sec.querySelector('.tree-title')?.textContent.split('—')[0].replace('$','').trim();
+    if (!name) return;
+    const a = document.createElement('a');
+    a.className = 'sidebar-link';
+    a.href = '#';
+    a.innerHTML = name;
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      sec.scrollIntoView({behavior:'smooth', block:'start'});
+      sec.classList.add('open');
+      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+      a.classList.add('active');
+    });
+    sb.appendChild(a);
+  });
+}
+buildSidebar('linux');
+
+// ── COPY ──
+function copyCode(btn) {
+  const block = btn.closest('.example-block') || btn.closest('.combo-card');
+  const text = block.querySelector('.combo-cmd')?.textContent ||
+    block.childNodes[0]?.textContent?.trim() ||
+    block.textContent.replace('COPY','').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'OK!';
+    btn.style.color = 'var(--green)';
+    setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1500);
+  });
+}
+
+// ── SEARCH ──
+const searchInput = document.getElementById('search');
+const visCount = document.getElementById('vis-count');
+const noResults = document.getElementById('no-results');
+const noResultsTerm = document.getElementById('no-results-term');
+
+function getSearchableText(el) {
+  const parts = [];
+  parts.push(el.dataset.search || '');
+  parts.push(el.querySelector('.cmd-name')?.textContent || '');
+  parts.push(el.querySelector('.cmd-desc')?.textContent || '');
+  parts.push(el.querySelector('.tree-title')?.textContent || '');
+  el.querySelectorAll('.flag-key, .flag-val, .t-flag, .t-cmd, .t-desc, .example-block, .combo-cmd, .combo-desc').forEach(n => {
+    parts.push(n.textContent);
+  });
+  return parts.join(' ').toLowerCase();
+}
+
+function updateCount() {
+  const activePanel = document.querySelector('.panel.active');
+  if (!activePanel) return;
+  const allCards = activePanel.querySelectorAll('.cmd-card, .tree-section, .combo-card, .danger-card');
+  const visible = [...allCards].filter(c => c.style.display !== 'none').length;
+  visCount.textContent = visible;
+}
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase().trim();
+  
+  if (!q) {
+    // Show all, reset to active tab
+    document.querySelectorAll('.cmd-card, .tree-section, .combo-card, .danger-card, .section-header').forEach(el => {
+      el.style.display = '';
+    });
+    noResults.style.display = 'none';
+    updateCount();
+    return;
+  }
+  
+  // Search across ALL panels
+  let totalVisible = 0;
+  
+  document.querySelectorAll('.panel').forEach(panel => {
+    const cards = panel.querySelectorAll('.cmd-card, .tree-section, .combo-card, .danger-card');
+    let panelVisible = 0;
+    
+    cards.forEach(card => {
+      const text = getSearchableText(card);
+      const match = text.includes(q);
+      card.style.display = match ? '' : 'none';
+      if (match) {
+        panelVisible++;
+        totalVisible++;
+        // Highlight matches
+        card.classList.add('open');
+      }
+    });
+    
+    // Show panel if it has results
+    if (panelVisible > 0) {
+      panel.classList.add('active');
+      // Activate corresponding tab
+      const panelId = panel.id.replace('panel-','');
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === panelId);
+      });
+    }
+  });
+  
+  // If no results across all panels
+  if (totalVisible === 0) {
+    noResults.style.display = 'block';
+    noResultsTerm.textContent = q;
+  } else {
+    noResults.style.display = 'none';
+  }
+  
+  visCount.textContent = totalVisible;
+});
+
+// ── STATS ──
+function calcStats() {
+  const cmds = document.querySelectorAll('.cmd-card, .tree-section').length;
+  const flags = document.querySelectorAll('.flag-row, .tree-table tr').length;
+  document.getElementById('stat-cmds').textContent = cmds;
+  document.getElementById('stat-flags').textContent = flags;
+}
+calcStats();
+updateCount();
+
+// ── KEYBOARD SHORTCUT ──
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    e.preventDefault();
+    searchInput.focus();
+    searchInput.select();
+  }
+});
+</script>
+</body>
+</html>
